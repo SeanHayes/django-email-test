@@ -25,14 +25,15 @@ class TestEmail(models.Model):
 	on the model.
 	"""
 	added = models.DateTimeField(auto_now_add=True)
-	
+
 	#email fields
 	date = models.DateTimeField(
-		default=lambda: datetime.now(),
+		default=datetime.now,
 		help_text="The date you want to set as the date header."
 	)
-	from_email = models.EmailField(
+	from_email = models.CharField(
 		'from',
+		max_length=150,
 		default=lambda: settings.DEFAULT_FROM_EMAIL
 	)
 	to = models.TextField(
@@ -50,18 +51,18 @@ class TestEmail(models.Model):
 		default="This is a test email."
 	)
 	body = models.TextField(default="Here's some default text.")
-	
+
 	sent = models.BooleanField(default=False, editable=False)
 	error = models.TextField(
 		default='',
 		blank=True,
 		editable=False
 	)
-	
+
 	def send(self):
 		to = self.to.split(',')
 		bcc = self.bcc.split(',')
-		
+
 		try:
 			email = EmailMessage(self.subject, self.body, self.from_email, to, bcc)
 			email.send()
@@ -70,14 +71,14 @@ class TestEmail(models.Model):
 			tb = traceback.format_exc()
 			logger.error(tb)
 			self.error = unicode(tb)
-		
+
 		#only save here if already in the database, otherwise the save_handler will call this function again
 		if self.id:
 			self.save()
-	
+
 	def __unicode__(self):
 		return self.subject
-	
+
 	class Meta:
 		ordering = ['-added']
 
