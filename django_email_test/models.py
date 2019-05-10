@@ -16,7 +16,9 @@ from django.db.models.signals import post_save, pre_save
 
 logger = logging.getLogger(__name__)
 
-# Create your models here.
+def test_email_default_from_email():
+	return settings.DEFAULT_FROM_EMAIL
+
 
 class TestEmail(models.Model):
 	"""
@@ -34,7 +36,7 @@ class TestEmail(models.Model):
 	from_email = models.CharField(
 		'from',
 		max_length=150,
-		default=lambda: settings.DEFAULT_FROM_EMAIL
+		default=test_email_default_from_email
 	)
 	to = models.TextField(
 		default='',
