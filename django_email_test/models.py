@@ -70,7 +70,10 @@ class TestEmail(models.Model):
 		except Exception as e:
 			tb = traceback.format_exc()
 			logger.error(tb)
-			self.error = unicode(tb)
+			try:
+				self.error = unicode(tb)
+			except:
+				self.error = str(tb)
 
 		#only save here if already in the database, otherwise the save_handler will call this function again
 		if self.id:
